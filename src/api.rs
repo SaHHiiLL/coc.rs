@@ -34,7 +34,7 @@ pub enum ApiError {
     Api(reqwest::StatusCode),
 }
 
-const BASE_URL: &str = "https://api.clashofclans.com/v1";
+pub const BASE_URL: &str = "https://api.clashofclans.com/v1";
 const IP_URL: &str = "https://api.ipify.org";
 
 impl Client {
@@ -43,10 +43,9 @@ impl Client {
             client: reqwest::Client::new(),
             ready: false,
             accounts: Vec::new(),
-            index: Mutex::new(Index {
-                key_account_index: 0,
-                key_index: 0,
-            }),
+            index: Mutex::new(
+                Index::new()
+            ),
             use_cache: false,
             ip_address: String::new(),
         }
