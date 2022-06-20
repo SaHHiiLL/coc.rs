@@ -1,5 +1,8 @@
+use crate::api;
+use serde::{ Serialize, Deserialize };
+
 // manage a session
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Index {
     key_account_index: i8,
     key_index: i8,
@@ -46,7 +49,7 @@ impl Index {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 
 pub struct APIAccount {
     credential: Credential,
@@ -77,7 +80,7 @@ impl APIAccount {
 
     pub async fn login(&self, client: reqwest::Client) -> Result<LoginResponse, reqwest::Error> {
         let mut res = client
-            .post(BASE_URL.to_string() + "/login")
+            .post(api::BASE_URL.to_string() + "/login")
             .json(&self.credential)
             .send()
             .await?;
@@ -86,14 +89,14 @@ impl APIAccount {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 
 struct Credential {
     email: String,
     password: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 
 struct LoginResponse {
     status: Status,
@@ -117,7 +120,7 @@ impl LoginResponse {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 
 struct Auth {
     uid: String,
@@ -137,7 +140,7 @@ impl Auth {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 
 struct Developer {
     id: String,
@@ -169,7 +172,7 @@ impl Developer {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 
 struct Keys {
     keys: Vec<Key>,
@@ -199,7 +202,7 @@ impl Keys {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 
 struct Key {
     id: String,
@@ -214,7 +217,7 @@ struct Key {
     key: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 
 struct KeyResponse {
     status: Status,
@@ -222,7 +225,7 @@ struct KeyResponse {
     key: Key,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 
 struct Status {
     code: i32,
