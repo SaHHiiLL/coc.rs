@@ -76,14 +76,18 @@ impl Client {
     }
 
     fn get(&self, url: String) -> Result<reqwest::RequestBuilder, reqwest::Error> {
+        // Replace this with ->
+        // request#Client#get#bearer_auth
         let string = format!("Bearer {}", &self.token);
         let mut headers = HeaderMap::new();
         headers.insert("Authorization", HeaderValue::from_str(&string).unwrap());
-        let res = reqwest::Client::new().get(url).headers(headers);
+        let res = reqwest::Client::new().get(url).bearer_auth().headers(headers);
         Ok(res)
     }
 
     fn post(&self, url: String, body: String) -> Result<reqwest::RequestBuilder, reqwest::Error> {
+        // Replace this with ->
+        // request#Client#get#bearer_auth
         let string = format!("Bearer {}", &self.token);
         let mut headers = HeaderMap::new();
         headers.insert("Authorization", HeaderValue::from_str(&string).unwrap());
