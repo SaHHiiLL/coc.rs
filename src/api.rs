@@ -81,7 +81,7 @@ impl Client {
         let string = format!("Bearer {}", &self.token);
         let mut headers = HeaderMap::new();
         headers.insert("Authorization", HeaderValue::from_str(&string).unwrap());
-        let res = reqwest::Client::new().get(url).bearer_auth().headers(headers);
+        let res = reqwest::Client::new().get(url).headers(headers);
         Ok(res)
     }
 
