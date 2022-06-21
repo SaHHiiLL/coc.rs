@@ -18,14 +18,14 @@ use serde::de::DeserializeOwned;
 
 #[derive(Debug)]
 pub struct Client {
-    client: reqwest::Client,
-    ready: bool,
+    pub client: reqwest::Client,
+    pub ready: bool,
 
-    accounts: Vec<APIAccount>,
-    index: Mutex<Index>,
-    use_cache: bool,
+    pub accounts: Vec<APIAccount>,
+    pub index: Mutex<Index>,
+    pub use_cache: bool,
 
-    ip_address: String,
+    pub ip_address: String,
 }
 
 #[derive(Debug)]
@@ -35,10 +35,11 @@ pub enum ApiError {
 }
 
 pub const BASE_URL: &str = "https://api.clashofclans.com/v1";
+pub const BASE_DEV_URL: &str = "https://developer.clashofclans.com/api";
 const IP_URL: &str = "https://api.ipify.org";
 
 impl Client {
-    pub fn new(token: String) -> Self {
+    pub fn new() -> Self {
         Self {
             client: reqwest::Client::new(),
             ready: false,
@@ -76,22 +77,12 @@ impl Client {
     }
 
     fn get(&self, url: String) -> Result<reqwest::RequestBuilder, reqwest::Error> {
-        // Replace this with ->
-        // request#Client#get#bearer_auth
-        let string = format!("Bearer {}", &self.token);
-        let mut headers = HeaderMap::new();
-        headers.insert("Authorization", HeaderValue::from_str(&string).unwrap());
-        let res = reqwest::Client::new().get(url).headers(headers);
+        let res = reqwest::Client::new().get(url).bearer_auth(self.token);
         Ok(res)
     }
 
     fn post(&self, url: String, body: String) -> Result<reqwest::RequestBuilder, reqwest::Error> {
-        // Replace this with ->
-        // request#Client#get#bearer_auth
-        let string = format!("Bearer {}", &self.token);
-        let mut headers = HeaderMap::new();
-        headers.insert("Authorization", HeaderValue::from_str(&string).unwrap());
-        let res = reqwest::Client::new().post(url).headers(headers).body(body);
+        let res = reqwest::Client::new().post(url).bearer_auth(self.token).body(body);
         Ok(res)
     }
 

@@ -80,7 +80,7 @@ impl APIAccount {
 
     pub async fn login(&self, client: reqwest::Client) -> Result<LoginResponse, reqwest::Error> {
         let mut res = client
-            .post(api::BASE_URL.to_string() + "/login")
+            .post(api::BASE_DEV_URL.to_string() + "/login")
             .json(&self.credential)
             .send()
             .await?;
@@ -91,13 +91,13 @@ impl APIAccount {
 
 #[derive(Debug, Serialize, Deserialize)]
 
-struct Credential {
-    email: String,
-    password: String,
+pub struct Credential {
+    pub email: String,
+    pub password: String,
 }
 
+/// This struct represents the json response from '' https://developer.clashofclans.com/api/login ''
 #[derive(Debug, Serialize, Deserialize)]
-
 struct LoginResponse {
     status: Status,
     session_expires_in_seconds: i32,
@@ -106,6 +106,7 @@ struct LoginResponse {
     temporary_api_token: String,
     swagger_url: String,
 }
+
 
 impl LoginResponse {
     pub fn new() -> Self {
@@ -120,8 +121,8 @@ impl LoginResponse {
     }
 }
 
+/// This struct represents the Auth object inside Login Response.
 #[derive(Debug, Serialize, Deserialize)]
-
 struct Auth {
     uid: String,
     token: String,
@@ -140,8 +141,8 @@ impl Auth {
     }
 }
 
+/// Developer object inside Login response, represents the
 #[derive(Debug, Serialize, Deserialize)]
-
 struct Developer {
     id: String,
     name: String,
@@ -173,7 +174,6 @@ impl Developer {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-
 struct Keys {
     keys: Vec<Key>,
     status: Status,
@@ -203,7 +203,6 @@ impl Keys {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-
 struct Key {
     id: String,
     developer_id: String,
@@ -218,15 +217,15 @@ struct Key {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-
 struct KeyResponse {
     status: Status,
     session_expire_in_seconds: i32,
     key: Key,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
 
+/// Status object inside Login response
+#[derive(Debug, Serialize, Deserialize)]
 struct Status {
     code: i32,
     message: String,

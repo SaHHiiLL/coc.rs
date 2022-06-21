@@ -1,7 +1,8 @@
 #[cfg(test)]
 mod tests {
     use std::mem::transmute;
-    use crate::api;
+    use crate::{api, dev};
+    use crate::dev::Credential;
 
     #[tokio::test]
     async fn test_player() {
