@@ -6,9 +6,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_player() {
-        let client = api::Client::new(
-            std::env::var("COC_TOKEN").unwrap(),
-        );
+        let client = api::Client::new();
 
         let tag = "#2PP".to_string();
         match client.get_player(tag).await {
@@ -34,9 +32,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_clan(){
-        let client = api::Client::new(
-            std::env::var("COC_TOKEN").unwrap(),
-        );
+        let client = api::Client::new();
         let tag = "#2pp".to_string();
 
         let x = client.get_clan(tag).await.expect("Unable to get clan");
@@ -47,9 +43,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_current_war(){
-        let client = api::Client::new(
-            std::env::var("COC_TOKEN").unwrap(),
-        );
+        let client = api::Client::new();
         let tag = "r8j".to_string();
 
         let x = client.get_current_war(tag);
@@ -76,9 +70,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_player_token(){
-        let client = api::Client::new(
-            std::env::var("COC_TOKEN").unwrap(),
-        );
+        let mut client = api::Client::new();
+        client.add_login_credentials(email.to_string(), password.to_string()).unwrap();
         let tag = "#CVJLQOLR".to_string();
         let token = "".to_string();
 

@@ -84,6 +84,7 @@ impl APIAccount {
             .json(&self.credential)
             .send()
             .await?;
+
         let response = res.json().await?;
         Ok(response)
     }
@@ -96,9 +97,18 @@ pub struct Credential {
     pub password: String,
 }
 
+impl Credential {
+    pub fn new(email: String, password: String) -> Self {
+        Credential {
+            email,
+            password,
+        }
+    }
+}
+
 /// This struct represents the json response from '' https://developer.clashofclans.com/api/login ''
 #[derive(Debug, Serialize, Deserialize)]
-struct LoginResponse {
+pub struct LoginResponse {
     status: Status,
     session_expires_in_seconds: i32,
     auth: Auth,
@@ -174,7 +184,7 @@ impl Developer {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Keys {
+pub struct Keys {
     keys: Vec<Key>,
     status: Status,
     session_expire: i32,
@@ -203,7 +213,7 @@ impl Keys {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Key {
+pub struct Key {
     id: String,
     developer_id: String,
     tier: String,
@@ -216,6 +226,39 @@ struct Key {
     key: String,
 }
 
+impl Key {
+    pub fn id(&self) -> &str {
+        &self.id
+    }
+    pub fn developer_id(&self) -> &str {
+        &self.developer_id
+    }
+    pub fn tier(&self) -> &str {
+        &self.tier
+    }
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+    pub fn description(&self) -> &str {
+        &self.description
+    }
+    pub fn origins(&self) -> &str {
+        &self.origins
+    }
+    pub fn scopes(&self) -> &Vec<String> {
+        &self.scopes
+    }
+    pub fn cidr_ranges(&self) -> &Vec<String> {
+        &self.cidr_ranges
+    }
+    pub fn valid_until(&self) -> &str {
+        &self.valid_until
+    }
+    pub fn key(&self) -> &str {
+        &self.key
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 struct KeyResponse {
     status: Status,
@@ -226,8 +269,14 @@ struct KeyResponse {
 
 /// Status object inside Login response
 #[derive(Debug, Serialize, Deserialize)]
-struct Status {
+pub struct Status {
     code: i32,
     message: String,
     detail: String,
+}
+
+impl Status {
+    pub fn new() -> Self {
+        Self { code: 0 , message: String::new(), detail: String::new() }
+    }
 }

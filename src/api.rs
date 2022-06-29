@@ -14,7 +14,9 @@ use crate::models::player::{Player, PlayerToken};
 use crate::dev::{APIAccount, Index};
 
 use reqwest::header::{HeaderMap, HeaderValue};
+use reqwest::RequestBuilder;
 use serde::de::DeserializeOwned;
+use crate::dev;
 
 #[derive(Debug)]
 pub struct Client {
@@ -39,6 +41,7 @@ pub const BASE_DEV_URL: &str = "https://developer.clashofclans.com/api";
 const IP_URL: &str = "https://api.ipify.org";
 
 impl Client {
+
     pub fn new() -> Self {
         Self {
             client: reqwest::Client::new(),
@@ -50,6 +53,23 @@ impl Client {
             use_cache: false,
             ip_address: String::new(),
         }
+    }
+
+    ///
+    /// Should return an error variant if the account is already in the list (will not add).
+    /// May be a better error here in future.
+    pub fn add_login_credentials(&mut self, email: String, password: String) -> Result<(), ()> {
+        let credential = dev::Credential::new(email, password);
+        let account = dev::APIAccount::new(credential);
+
+        //let vec = &self.accounts.
+        //let x: Vec<APIAccount> = vec.into_iter().filter(|x|  x.credential().email == email).collect();
+
+        //if x.len() == 0 {
+        //    Err(())
+        //}else {
+            self.accounts.push(account);
+            Ok(())
     }
 
     async fn get_ip(&self) -> Result<String, reqwest::Error> {
@@ -76,13 +96,25 @@ impl Client {
         }
     }
 
+    fn get_current_token(&self) -> String{
+        let acc_ind = self.index.lock().unwrap().key_account_index();
+        let key_ind = self.index.lock().unwrap().key_index();
+
+        let x = self.accounts.get(acc_ind as usize).unwrap();
+        let x1 = x.keys().keys().get(key_ind as usize).unwrap().key();
+
+        self.inc_index();
+
+        x1.to_string()
+    }
+
     fn get(&self, url: String) -> Result<reqwest::RequestBuilder, reqwest::Error> {
-        let res = reqwest::Client::new().get(url).bearer_auth(self.token);
+        let res = reqwest::Client::new().get(url).bearer_auth(self.get_current_token());
         Ok(res)
     }
 
     fn post(&self, url: String, body: String) -> Result<reqwest::RequestBuilder, reqwest::Error> {
-        let res = reqwest::Client::new().post(url).bearer_auth(self.token).body(body);
+        let res = reqwest::Client::new().post(url).bearer_auth(self.get_current_token()).body(body);
         Ok(res)
     }
 
