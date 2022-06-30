@@ -72,6 +72,7 @@ mod tests {
     async fn test_player_token(){
         let mut client = api::Client::new();
         client.add_login_credentials(email.to_string(), password.to_string()).unwrap();
+        client.login_all().await;
         let tag = "#CVJLQOLR".to_string();
         let token = "".to_string();
 

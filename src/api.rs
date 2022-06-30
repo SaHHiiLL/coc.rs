@@ -44,7 +44,7 @@ impl Client {
 
     pub fn new() -> Self {
         Self {
-            client: reqwest::Client::new(),
+            client: reqwest::Client::builder().cookie_store(true).build().unwrap(),
             ready: false,
             accounts: Vec::new(),
             index: Mutex::new(
@@ -68,8 +68,26 @@ impl Client {
         //if x.len() == 0 {
         //    Err(())
         //}else {
-            self.accounts.push(account);
-            Ok(())
+        self.accounts.push(account);
+        Ok(())
+    }
+
+    pub async fn login_all(&self) {
+        for x in &self.accounts {
+            let x1 = x.login(&self.client).await.unwrap();
+            println!("{:?}", x1);
+
+            self.get_keys(&self.client).await
+        }
+    }
+
+    async fn get_keys(&self, client: &reqwest::Client){
+        let response = client.post(format!("{}/apikey/list", BASE_DEV_URL))
+            .send()
+            .await
+            .unwrap();
+
+        println!("{}", response.text().await.expect("cannot paste text"))
     }
 
     async fn get_ip(&self) -> Result<String, reqwest::Error> {
@@ -97,15 +115,17 @@ impl Client {
     }
 
     fn get_current_token(&self) -> String{
-        let acc_ind = self.index.lock().unwrap().key_account_index();
-        let key_ind = self.index.lock().unwrap().key_index();
 
-        let x = self.accounts.get(acc_ind as usize).unwrap();
-        let x1 = x.keys().keys().get(key_ind as usize).unwrap().key();
-
-        self.inc_index();
-
-        x1.to_string()
+        // let acc_ind = self.index.lock().unwrap().key_account_index();
+        // let key_ind = self.index.lock().unwrap().key_index();
+        //
+        // let x = self.accounts.get(acc_ind as usize).unwrap();
+        // let x1 = x.keys().keys().get(key_ind as usize).unwrap().key();
+        //
+        // self.inc_index();
+        //
+        // x1.to_string()
+        todo!()
     }
 
     fn get(&self, url: String) -> Result<reqwest::RequestBuilder, reqwest::Error> {

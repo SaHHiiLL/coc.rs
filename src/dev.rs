@@ -78,7 +78,7 @@ impl APIAccount {
         &self.keys
     }
 
-    pub async fn login(&self, client: reqwest::Client) -> Result<LoginResponse, reqwest::Error> {
+    pub async fn login(&self, client: &reqwest::Client) -> Result<LoginResponse, reqwest::Error> {
         let mut res = client
             .post(api::BASE_DEV_URL.to_string() + "/login")
             .json(&self.credential)
@@ -110,10 +110,13 @@ impl Credential {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct LoginResponse {
     status: Status,
-    session_expires_in_seconds: i32,
+    #[serde(rename = "sessionExpiresInSeconds")]
+    session_expires_in_seconds: i64,
     auth: Auth,
     developer: Developer,
+    #[serde(rename = "temporaryAPIToken")]
     temporary_api_token: String,
+    #[serde(rename = "swaggerUrl")]
     swagger_url: String,
 }
 
@@ -136,8 +139,8 @@ impl LoginResponse {
 struct Auth {
     uid: String,
     token: String,
-    ua: String,
-    ip: String,
+    ua: Option<String>,
+    ip: Option<String>,
 }
 
 impl Auth {
@@ -145,8 +148,8 @@ impl Auth {
         Self {
             uid: String::new(),
             token: String::new(),
-            ua: String::new(),
-            ip: String::new(),
+            ua: Option::from(String::new()),
+            ip: Option::from(String::new()),
         }
     }
 }
@@ -159,10 +162,15 @@ struct Developer {
     game: String,
     email: String,
     tier: String,
-    allowed_scopes: String,
-    max_cidrs: String,
+    #[serde(rename = "allowedScopes")]
+    allowed_scopes: Option<String>,
+    #[serde(rename = "maxCidrs")]
+    max_cidrs: Option<String>,
+    #[serde(rename = "prevLoginTs")]
     prev_login_ts: String,
+    #[serde(rename = "prevLoginIp")]
     prev_login_ip: String,
+    #[serde(rename = "prevLoginUa")]
     prev_login_ua: String,
 }
 
@@ -174,8 +182,8 @@ impl Developer {
             game: String::new(),
             email: String::new(),
             tier: String::new(),
-            allowed_scopes: String::new(),
-            max_cidrs: String::new(),
+            allowed_scopes: Option::from(String::new()),
+            max_cidrs: Option::from(String::new()),
             prev_login_ts: String::new(),
             prev_login_ip: String::new(),
             prev_login_ua: String::new(),
@@ -187,6 +195,7 @@ impl Developer {
 pub struct Keys {
     keys: Vec<Key>,
     status: Status,
+    #[serde(rename="sessionExpire")]
     session_expire: i32,
 }
 
@@ -271,12 +280,12 @@ struct KeyResponse {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Status {
     code: i32,
-    message: String,
-    detail: String,
+    message: Option<String>,
+    detail: Option<String>,
 }
 
 impl Status {
     pub fn new() -> Self {
-        Self { code: 0 , message: String::new(), detail: String::new() }
+        Self { code: 0 , message: Option::from(String::new()), detail: Option::from(String::new()) }
     }
 }
