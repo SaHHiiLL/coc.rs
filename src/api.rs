@@ -11,7 +11,7 @@ use crate::models::current_war::War;
 use crate::models::gold_pass::GoldPass;
 use crate::models::player::{Player, PlayerToken};
 
-use crate::dev::{APIAccount, Index};
+use crate::dev::{APIAccount, Credential, Index};
 
 use reqwest::header::{HeaderMap, HeaderValue};
 use reqwest::RequestBuilder;
@@ -42,8 +42,8 @@ const IP_URL: &str = "https://api.ipify.org";
 
 impl Client {
 
-    pub fn new() -> Self {
-        Self {
+    pub fn new(cred: Vec<dev::Credential>) -> Self {
+        let client = Self {
             client: reqwest::Client::builder().cookie_store(true).build().unwrap(),
             ready: false,
             accounts: Vec::new(),
@@ -52,10 +52,9 @@ impl Client {
             ),
             use_cache: false,
             ip_address: String::new(),
-        }
+        };
     }
 
-    ///
     /// Should return an error variant if the account is already in the list (will not add).
     /// May be a better error here in future.
     pub fn add_login_credentials(&mut self, email: String, password: String) -> Result<(), ()> {
